@@ -49,28 +49,29 @@ class Rainbowth(sublime_plugin.EventListener):
   def on_activated(self, view):
     if not view.settings().get('rainbowthed'):
       file_scope = view.scope_name(0)
-      view.settings().set('lispy',
-          file_scope.split('.')[1].split(' ')[0] in ['lisp', 'scheme', 'clojure'])
-      if view.settings().get('lispy'):
+      print(view.scope_name(0))
+      view.settings().set('enabled',
+          file_scope.split('.')[1].split(' ')[0] in ['lisp', 'scheme', 'clojure', 'scala', 'plain']) # Unfortunately, JavaScript identifies as 'text.plain'...
+      if view.settings().get('enabled'):
         self.update_colors(view)
         self.on_modified(view, True)
         view.settings().set('rainbowthed', True)
 
   def on_modified(self, view, load = False):
-    if not view.settings().get('lispy'):
+    if not view.settings().get('enabled'):
       return
 
     source = view.substr(sublime.Region(0, view.size()))
 
     parens = [(sublime.Region(idx, idx + 1), char)
       for idx, char in enumerate(source[0:view.size()])
-      if char in '()[]']
+      if char in '()[]{}']
 
     level, depths = 0, [[sublime.Region(-1, 0)] for i in range(len(self.colors))]
     for region, char in parens:
-      level += (char in '([') and -1 or 0
+      level += (char in '([{') and -1 or 0
       depths[level % len(self.colors)].append(region)
-      level += (char in ')]') and 1 or 0
+      level += (char in ')]}') and 1 or 0
 
     for i, regions in enumerate(depths):
       view.erase_regions('rainbowth%d' % i)
