@@ -61,6 +61,9 @@ class Rainbowth(sublime_plugin.EventListener):
     if not view.settings().get('enabled'):
       return
 
+    if not hasattr(self, 'colors'):
+      self.update_colors(view)
+
     source = view.substr(sublime.Region(0, view.size()))
 
     parens = [(sublime.Region(idx, idx + 1), char)
