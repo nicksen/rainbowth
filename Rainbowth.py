@@ -51,7 +51,7 @@ class Rainbowth(sublime_plugin.EventListener):
       file_scope = view.scope_name(0)
       print(view.scope_name(0))
       view.settings().set('enabled',
-          file_scope.split('.')[1].split(' ')[0] in ['lisp', 'scheme', 'clojure', 'scala', 'plain']) # Unfortunately, JavaScript identifies as 'text.plain'...
+          file_scope.split('.')[1].split(' ')[0] in ['lisp', 'scheme', 'clojure', 'scala', 'js'])
       if view.settings().get('enabled'):
         self.update_colors(view)
         self.on_modified(view, True)
